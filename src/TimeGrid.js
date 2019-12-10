@@ -104,7 +104,7 @@ export default class TimeGrid extends Component {
     })
   }
 
-  renderEvents(range, events, now) {
+  renderEvents(range, events, backgroundEvents, now) {
     let {
       min,
       max,
@@ -116,10 +116,22 @@ export default class TimeGrid extends Component {
 
     const resources = this.memoizedResources(this.props.resources, accessors)
     const groupedEvents = resources.groupEvents(events)
+    const groupedBackgroundEvents = resources.groupEvents(backgroundEvents)
 
     return resources.map(([id, resource], i) =>
       range.map((date, jj) => {
         let daysEvents = (groupedEvents.get(id) || []).filter(event =>
+          dates.inRange(
+            date,
+            accessors.start(event),
+            accessors.end(event),
+            'day'
+          )
+        )
+
+        let daysBackgroundEvents = (
+          groupedBackgroundEvents.get(id) || []
+        ).filter(event =>
           dates.inRange(
             date,
             accessors.start(event),
@@ -141,6 +153,7 @@ export default class TimeGrid extends Component {
             date={date}
             events={daysEvents}
             dayLayoutAlgorithm={dayLayoutAlgorithm}
+            backgroundEvents={daysBackgroundEvents}
           />
         )
       })
@@ -150,6 +163,7 @@ export default class TimeGrid extends Component {
   render() {
     let {
       events,
+      backgroundEvents,
       range,
       width,
       rtl,
@@ -174,7 +188,8 @@ export default class TimeGrid extends Component {
     this.slots = range.length
 
     let allDayEvents = [],
-      rangeEvents = []
+      rangeEvents = [],
+      rangeBackgroundEvents = []
 
     events.forEach(event => {
       if (inRange(event, start, end, accessors)) {
@@ -190,6 +205,12 @@ export default class TimeGrid extends Component {
         } else {
           rangeEvents.push(event)
         }
+      }
+    })
+
+    backgroundEvents.forEach(event => {
+      if (inRange(event, start, end, accessors)) {
+        rangeBackgroundEvents.push(event)
       }
     })
 
@@ -241,7 +262,12 @@ export default class TimeGrid extends Component {
             components={components}
             className="rbc-time-gutter"
           />
-          {this.renderEvents(range, rangeEvents, getNow())}
+          {this.renderEvents(
+            range,
+            rangeEvents,
+            rangeBackgroundEvents,
+            getNow()
+          )}
         </div>
       </div>
     )
@@ -306,6 +332,7 @@ export default class TimeGrid extends Component {
 
 TimeGrid.propTypes = {
   events: PropTypes.array.isRequired,
+  backgroundEvents: PropTypes.array.isRequired,
   resources: PropTypes.array,
 
   step: PropTypes.number,
