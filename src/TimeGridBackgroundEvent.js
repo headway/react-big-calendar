@@ -1,5 +1,6 @@
 import cn from 'classnames'
 import React from 'react'
+import { stringifyPercent } from './TimeGridEvent'
 
 /* eslint-disable react/prop-types */
 function TimeGridBackgroundEvent(props) {
@@ -8,7 +9,7 @@ function TimeGridBackgroundEvent(props) {
     className,
     event,
     accessors,
-    isRtl,
+    rtl,
     selected,
     label,
     continuesEarlier,
@@ -33,10 +34,10 @@ function TimeGridBackgroundEvent(props) {
         onDoubleClick={onDoubleClick}
         style={{
           ...userProps.style,
-          top: `${top}%`,
-          height: `${height}%`,
-          [isRtl ? 'right' : 'left']: `${Math.max(0, xOffset)}%`,
-          width: `calc(${width}% + 10px)`,
+          top: stringifyPercent(top),
+          [rtl ? 'right' : 'left']: stringifyPercent(xOffset),
+          width: stringifyPercent(width),
+          height: stringifyPercent(height),
         }}
         title={
           tooltip

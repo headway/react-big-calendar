@@ -180,7 +180,7 @@ class DayColumn extends React.Component {
 
   renderEvents = ({ events, isBackgroundEvent }) => {
     let {
-      rtl: isRtl,
+      rtl,
       selected,
       accessors,
       localizer,
@@ -225,7 +225,7 @@ class DayColumn extends React.Component {
         label: label,
         key: 'evt_' + idx,
         getters: getters,
-        isRtl: isRtl,
+        rtl: rtl,
         components: components,
         continuesEarlier: continuesEarlier,
         continuesLater: continuesLater,
