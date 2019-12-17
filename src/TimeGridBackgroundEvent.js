@@ -17,8 +17,12 @@ function TimeGridBackgroundEvent(props) {
     getters,
     onClick,
     onDoubleClick,
-    components: { backgroundEventWrapper: BackgroundEventWrapper },
+    components: {
+      event: Event,
+      backgroundEventWrapper: BackgroundEventWrapper,
+    },
   } = props
+  let title = accessors.title(event)
   let tooltip = accessors.tooltip(event)
   let end = accessors.end(event)
   let start = accessors.start(event)
@@ -26,6 +30,14 @@ function TimeGridBackgroundEvent(props) {
   let userProps = getters.backgroundEventProp(event, start, end, selected)
 
   let { height, top, width, xOffset } = style
+  const inner = [
+    <div key="1" className="rbc-event-label">
+      {label}
+    </div>,
+    <div key="2" className="rbc-event-content">
+      {Event ? <Event event={event} title={title} /> : title}
+    </div>,
+  ]
 
   return (
     <BackgroundEventWrapper type="time" {...props}>
@@ -55,7 +67,9 @@ function TimeGridBackgroundEvent(props) {
             'rbc-event-continues-later': continuesLater,
           }
         )}
-      />
+      >
+        {inner}
+      </div>
     </BackgroundEventWrapper>
   )
 }
